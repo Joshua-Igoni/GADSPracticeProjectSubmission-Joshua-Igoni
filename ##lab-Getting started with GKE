@@ -1,0 +1,57 @@
+##lab-Getting started with GKE
+
+#Objectives
+
+In this lab, you will learn how to perform the following task;
+
+	-Provision a kubernetes cluster using kubernetes Engine
+
+	-Deploy and manage docker containers using kubectl
+
+#Steps
+
+1. Confirm that needed APIs are enabled
+	
+	#fist check if the Kubernetes Engine API and Container Registery API are enable with the following command
+	gcloud service-management list --enabled
+
+	#If they are not listed, then enable the APIs with the following commands
+	gcloud services enable containerregistry.googleapis.com
+	gcloud services enable container.googleapis.com
+
+2. Start a Kubernetes Engine cluster
+	
+	#the following command places the zone into an environment variable
+	export MY_ZONE=us-central1-a
+
+	#Start a kubernetes cluster managed by kubernetes Engine. Name the cluster webfrontend and configure it to run 2 nodes with the following command
+	gcloud container clusters create webfrontend --zone $MY_ZONE --num-nodes 2
+
+	#check your installed version of Kubernetes using the following command
+	kubectl version
+
+	#view your running nodes with the following commands
+	gcloud compute intance list
+
+3. Run and deploy a container
+
+	#launch a single instance of the nginx container with the following command
+	kubectl create deploy nginx --image=nginx:1.17.10
+
+	#View the pod running the nginx container with the following command
+	kubectl get pods
+
+	#Expose the nginx container to the Internet
+	kubectl expose deployment nginx --port 80 --type LoadBalancer
+
+	#View the new service with the following command
+	kubectl get services
+
+	#Scale up the number of pods running on your service with the following command
+	kubectl scale deployment nginx --replicas 3
+
+	#Confirm that Kubernetes has updated the number of pods
+	kubectl get pods
+
+	#Confirm that your external IP address has not changed with the following command
+	kubectl get services

@@ -1,0 +1,59 @@
+##lab-Getting started with Compute Engine
+
+#Objectives
+
+In this lab, you will learn how to perform the following
+
+	-Create a Compute Engine Virtual Machine using the Google Cloud Platform (GCP) console
+
+	-Create a Compute Engine virtual machine using the gcloud command-line interface.
+
+	-Connect between the two instances.
+
+#Steps
+
+1. Create a virtual machine using the GCP Console.
+
+	gcloud beta compute instances create my-vm-1 --zone=us-central1-a --machine-type=e2-meduim --subnet=default --tags=http-server --image=debian-9-stretch-v20200902 --image-project=debian-cloud --boot-disk-size=10GB --boot-disk-type=pd-standard --boot-disk-device-name=my-vm-1
+
+	gcloud compute firewall-rules create default-allow-http --direction=INGRESS --priority=1000 --network=default --action=ALLOW --rules=tcp:80 --source-ranges=0.0.0.0/0 --target-tags=http-server
+
+2. Create a virtual machine using the gcloud command line.
+
+	#the following command lists all the zones available in us-central1
+	gcloud compute zones list | grep us-central1
+
+	#the following command sets the default zone to us-central1-b
+	gcloud config set compute/zone us-central1-b
+
+	#the following command creates a VM instance called my-vm-2
+	gcloud compute instances create "my-vm-2" --machine-type "n1-standard-1" --image-project "debian-cloud" --image "debiab-9-stretch-v20110293" --subnet "default"
+
+3. Connect between VM instances
+	
+	#the following command opens a command prompt on my-vm-2
+	gcloud compute ssh my-vm-2
+
+	#the following command tests for connectivity to my-vm-1 from my-vm-2
+	ping my-vm-1
+
+	#the following command opens a command prompt on my-vm-1
+	ssh my-vm-1
+
+	#the following command installs the nginx web server on my-vm-1
+	sudo apt-get install nginx-light -y
+
+	#the following command uses the nano text editor to edit a html page
+	sudo nano /var/www/html/index.nginx-debian.html
+
+	#In the html page input the following line of text under the h1 header
+	Hi from Joshua Igoni
+
+	#Use the following command to confirm the webserver is serving the new html page
+	curl http://localhost/
+
+	#the following command exits the command prompt on my-vm-1
+	exit
+
+	#To confirm that my-vm-2 can reach the web server on my-vm-1, at the command prompt on my-vm-2, execute this command
+	curl http://my-vm-1/
